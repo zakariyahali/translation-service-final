@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Translator Service</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+    }
+    .content {
+      flex: 1;
+    }
+    .navbar {
+      background-color: #34568B;
+    }
+    .btn-primary {
+      background-color: #88B04B;
+      border-color: #88B04B;
+    }
+    .form-label {
+      color: #34568B;
+    }
+    .logo {
+      max-width: 30%;
+      height: auto;
+      padding: 20px;
+    }
+    .footer {
+      color: black;
+      text-align: center;
+      padding: 10px 0;
+      width: 100%;
+    }
+    .form-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100%;
+      padding: 20px;
+    }
+    .form-box {
+      width: 100%;
+      max-width: 600px;
+      margin: 10px 0;
+    }
+    .btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand mx-auto" href="#">Translator Service</a>
+      <div class="navbar-text text-light">
+        AlphaLoops TASK-Exercise
+      </div>
+    </div>
+  </nav>
+
+  <div class="content">
+    <div class="container form-container">
+      <div class="form-box">
+        <label for="text" class="form-label">Text to Translate</label>
+        <textarea id="text" class="form-control" rows="10"></textarea>
+      </div>
+      <div class="form-box">
+        <label for="languages" class="form-label">Languages</label>
+        <input id="languages" class="form-control" type="text" placeholder="e.g., english, german, russian">
+        <small class="form-text text-muted">Write the languages you want to translate your text to, separated by commas.</small>
+      </div>
+      <div class="btn-container">
+        <button class="btn btn-primary" onclick="translateText()">Translate</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2024 Translator Service
+  </div>
+
+  <script>
+    async function translateText() {
+      // Extract the text and languages from the form
+      var text_for_translation = document.getElementById('text').value;
+      var languages_chosen = document.getElementById('languages').value;
+
+      // Prepare the payload
+      var payload = {
+        text: text_for_translation,
+        languages: languages_chosen
+      };
+
+      try {
+        // Execute the POST request to the translation endpoint
+        const response = await fetch('http://localhost:8000/translate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        // Check if the response is OK
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        // Parse and handle the response
+        const result = await response.json();
+        alert('Translation request submitted. ID: ' + result.id);
+        window.location.href = '/translate/' + result.id;
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to submit translation request.');
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
